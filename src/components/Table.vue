@@ -50,7 +50,7 @@
       </div> 
         <span v-if="form.state === 1" @click="form.state = 0, resetText()" >I want to add product.</span>
   </div>
-  {{item}}
+
 </template>
 
 <script setup>
@@ -131,8 +131,8 @@ function editProduct(index){
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .component {
-  width: 80%;
-  margin: 2% 10% 2% 10%;
+  width: 100%;
+  margin: 2% 0 2% 0;
   align-items: center;
   justify-content: center;
 }
@@ -143,12 +143,13 @@ table {
 .totalprice {
   margin: 2%000;
   padding: 2%;
+  text-decoration: underline orangered;
 }
 .addProduct {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 5% 0 0 0 ;
+  margin: 1% 0 0 0 ;
 }
 .addProduct > div {
   padding: 10px
