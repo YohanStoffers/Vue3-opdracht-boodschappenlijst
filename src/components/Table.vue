@@ -18,56 +18,131 @@
           <td>
             &euro;{{item.subTotal}}
           </td>
-          <td class="delete">
+          <td @click="editProduct(index)" class="actionButtons">
+            edit
+          </td>
+          <td @click="delProduct(index)" class="actionButtons">
             Remove
           </td>
         </tr>
       </table>
-      <div class="addProduct">
+      <div class="totalprice">
+        <h2>Total-Price: &euro;{{endTotal}}</h2>
+      </div>
+      <hr>
+      <h3>{{anouncement.form}}</h3>
+      <div v-if="!(anouncement.form == text.loader)" class="addProduct">
         <div>
           <h4>Enter Name</h4>
-          <input type="text">
+          <input v-model="item.name" type="text">
         </div>
         <div>
           <h4>Enter Price</h4>
-          <input type="number" min="0">
+          <input v-model="item.price" type="number" min="0" placeholder="0">
         </div>
          <div>
           <h4>Enter Amount</h4>
-          <input type="number" min="0" step="1">
+          <input v-model="item.amount" type="number" min="0" step="1" placeholder="0">
         </div>
+      </div>
+      <div>
+        <button @click="ProductManager"><h2>{{buttonState}}</h2></button>
       </div> 
-        <button><h2>Add Product</h2></button>
+        <span v-if="form.state === 1" @click="form.state = 0, resetText()" >I want to add product.</span>
   </div>
-  {{endTotal}}
+  {{item}}
 </template>
 
 <script setup>
 
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { computed } from "vue";
-import Items from "../Data/items";
+import { Item, groceries } from "../Data/items";
 
-const items = ref(Items);
+const item = reactive({
+  id: null,
+  name: '',
+  price: null,
+  amount: null,
+})
+const form = reactive({
+  state: 0,
+})
+const text = {
+  stock: 'Enter new product',
+  error: 'You need to add a product',
+  loader: 'Adding product: Loading...',
+  editor: 'Edit your product',
+  addButton: 'Add-Product',
+  editButton: 'Edit-Product',
+}
+
+const anouncement = reactive({
+  form: text.stock,
+  button: text.addButton,
+})
+const items = ref(groceries);
 
 const endTotal = computed(()=>{
-  
-return "test"
+  return items.value.map((item)=> {
+    return  parseFloat(item.subTotal)
+  }).reduce((last, current) => last + current).toFixed(2);
 })
-
+const buttonState = computed(()=>{
+  return (form.state === 1)? text.editButton : text.addButton;
+})
+function resetText(){
+  anouncement.form = text.stock
+  item.id = null;
+  item.name = '';
+  item.price = null;
+  item.amount = null;
+}
+function ProductManager(){
+  if(item.name != ''){
+    if(form.state === 0){
+      items.value.push(new Item(item.name, item.price, item.amount));
+    }
+    else{
+      items.value[item.id] = new Item(item.name, item.price, item.amount);
+      form.state = 0;
+    }
+    anouncement.form = text.loader;
+    setTimeout(resetText, 2000)
+  }
+  else{
+    setTimeout(resetText, 3000)
+    anouncement.form = text.error;
+  }
+}
+function delProduct(index){
+  items.value.splice(index, 1)
+}
+function editProduct(index){
+  form.state = 1;
+  anouncement.form = text.editor;
+  item.id = index
+  item.name = items.value[index].Name
+  item.price = items.value[index].Price
+  item.amount = items.value[index].Amount
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .component {
   width: 80%;
-  margin: 5% 10% 5% 10%;
+  margin: 2% 10% 2% 10%;
   align-items: center;
   justify-content: center;
 }
 table {
   margin-left: auto;
   margin-right: auto;
+}
+.totalprice {
+  margin: 2%000;
+  padding: 2%;
 }
 .addProduct {
   display: flex;
@@ -77,6 +152,14 @@ table {
 }
 .addProduct > div {
   padding: 10px
+}
+span {
+  text-decoration: underline;
+  font-style: italic;
+}
+span:hover {
+  cursor: pointer;
+  color: #111;
 }
 button {
   margin: 2% 000;
@@ -93,14 +176,14 @@ button:hover {
   cursor: pointer;
   color: #333;
 }
-.delete {
+.actionButtons {
   border: solid 1px #333;
   background: none;
   border-radius: 2px;
   color: orangered;
   transition: 0.5;
 }
-.delete:hover {
+.actionButtons:hover {
   transition: 0.5s;
   cursor: pointer;
   color: #333;
@@ -109,7 +192,7 @@ h2 {
   font-size: 250%;
 }
 th {
-  font-size: 120%;
+  font-size: 110%;
   padding: 5px 10px 5px 10px;
 }
 table > tr > td{

@@ -1,4 +1,4 @@
-class Item {
+export class Item {
     constructor(name, price, amount){
         this.Name = name;
         this.Price = price;
@@ -20,13 +20,9 @@ class Item {
     set amount(amount) {
         this._amount = amount
     }
-
-    get message() {
-        return 'hello world'
-    }
 }
 
-export default [
+export const groceries = [
     new Item("Cola", 2.50, 4),
     new Item("Beans", 1.20, 2),
     new Item("Candy", 0.70, 6),

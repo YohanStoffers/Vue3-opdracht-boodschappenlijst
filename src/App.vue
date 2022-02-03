@@ -2,7 +2,7 @@
   <h1>Boodschappen Opdracht.</h1> 
   <h2 class="three">VUE 3</h2>
   <hr>
-  <Table id="table" />
+  <Table />
 </template>
 
 <script setup>
